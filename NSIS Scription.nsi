@@ -2,38 +2,45 @@
 
 ; HM NIS Edit Wizard helper defines
 
-# #�̳� ;�� �����ϸ� �ּ����Դϴ�. �����ÿ� ���� ���.
-# �����ּ����� /*�� �����ؼ� */�� ������ �ȴ�
+# #이나 ;로 시작하면 주석문입니다. 설명시에 종종 사용.
+# 다중주석문은 /*로 시작해서 */로 끝나면 된다
 
-!define PRODUCT_NAME "���� ���α׷�"
-# ������� ������ �̸��� ��Ÿ����.
+!define PRODUCT_NAME "응용 프로그램"
+# 만들어질 파일의 이름을 나타낸다.
 
 !define PRODUCT_VERSION "1.0"
-# �������� ��Ÿ��. �ڽ��� ���Ҵ�� �ٲپ� ����.
+# 버전명을 나타냄. 자신이 편할대로 바꾸어 쓰자.
 
-!define PRODUCT_PUBLISHER "���� ȸ��, Inc."
-# �����ڸ� ����. �ڽ��� ���Ҵ�� �ٲپ� ����.
+!define PRODUCT_PUBLISHER "나의 회사, Inc."
+# 제공자를 말함. 자신이 편할대로 바꾸어 쓰자.
 
 !define PRODUCT_WEB_SITE "http://www.mycompany.com"
-# �� �״�� ������Ʈ�� ��Ÿ��.
+# 말 그대로 웹사이트를 나타냄.
 
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\AppMainExe.exe"
-# ������Ʈ���� ����Ҷ� ���±���. ����ũ����Ʈ ������ġ������� �� ���̴� �� ���� �����ִ°� ����.
+# 레지스트리를 등록할때 쓰는구문. 마인크래프트 간편설치기용으로 쓸 것이니 이 줄은 지워주는게 좋다.
 
 SetCompressor lzma
+# 압축 형태를 말하는것. LZMA가 현재 가장 압축률이 높음. 다른걸 써도 상관은 없다.
+# 기본적으로 압축 포멧은 zlib, bzip2, LZMA 가 있다.
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
+# 자세한 설명은 생략한다.
 
 ; MUI Settings
 !define MUI_ABORTWARNING
+# 사용자가 인스톨러를 닫을려고 할때 경고 메시지를 보여 주는 창을 보여 주라는 매크로이다.
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
+# 완성된 파일의 보여지는 아이콘. 현재 경로는 기본 모던 인스톨 아이콘으로 되어있다.
 
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page
 !define MUI_LICENSEPAGE_CHECKBOX
 !insertmacro MUI_PAGE_LICENSE "c:\path\to\licence\YourSoftwareLicence.txt"
+# 라이센스 경로가 기본경로로 잡혀있는데 컴파일하면 안된다. 따라서 처음엔 지우고 쓴다.
+
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
@@ -48,18 +55,38 @@ SetCompressor lzma
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+# define에 정의 되어있는 것들로 이름을 지정한다. 이건 설치기를 켰을때 보여지는 이름이다.
+# 현재는 "응용 프로그램 0.1" 로 나올것이다.
+
 OutFile "Setup.exe"
-InstallDir "$PROGRAMFILES\���� ���α׷�"
+# 파일이 만들어 졌을때 쓰여질 이름.
+
+InstallDir "$PROGRAMFILES\응용 프로그램"
+# 인스톨 되는 경로다. 쉽게말해 저 경로에 파일의 압축이 풀린다는것.
+
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
+# 이부분은 쓰지 않는다. 레지스트리 등록부분인데, 단순 압축해제용 간편설치기이니 깔끔하게 지워준다.
+
 ShowInstDetails show
+# 인스톨시 그 내역을 보이게 할까 하는 매크로.
+# 종류로는 show와 nevershow 정도 있는걸로 기억. nevershow를 하면 세부사항을 보여주지 않는다.
 
 Section "MainSection" SEC01
+# 섹션의 시작. 기본 포멧이다.
+
   SetOutPath "$INSTDIR"
+  # 작업이 될 경로를 가리킨다. $으로 시작하는것들은 변수이다. 현재는 "$PROGRAMFILES\응용" 프로그램 로 되어있다.
+  
   SetOverwrite ifnewer
+  # 파일이 존재할 경우 기존의 파일을 덮어 쓸지 말지 결정하는 명령어.
+  # on은 그냥 덮어씀. off는 덮어 쓰지 않는다. ifnewer은 기존 파일이 새 파일보다 오래된 경우 덮어씀.
+  
   File "c:\path\to\file\AppMainExe.exe"
   File "c:\path\to\file\Example.file"
 SectionEnd
+# 섹션의 끝.
 
 Section -Post
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\AppMainExe.exe"
 SectionEnd
+# 윗 세줄은 모두 쓸 필요없다. 그냥 지운다.
